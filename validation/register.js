@@ -26,7 +26,7 @@ module.exports = function validateRegisterInput(data) {
   }
   // Password confirmation is required
   if (Validator.isEmpty(data.passwordConfirm)) {
-    errors.passwordConfirm = "El campo de contraseña es requerido.";
+    errors.passwordConfirm = "Confirmar la contraseña es requerido.";
   }
   // Some password requirements
   if (!Validator.isLength(data.password, {min: 6, max: 30 })) {
@@ -39,6 +39,6 @@ module.exports = function validateRegisterInput(data) {
   // return the errors
   return {
     errors, // the errors object
-    isValis: isEmpty(errors)  // boolean
+    isValid: isEmpty(errors)  // boolean
   };
 };

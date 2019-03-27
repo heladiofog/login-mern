@@ -1,6 +1,10 @@
 const express = require ('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const passport = require('passport');
+// Routes
+const userRoutes = require('./routes/api/user');
+
 // Instantiating the app
 const app = express();
 
@@ -14,12 +18,20 @@ app.use(bodyParser.json());
 
 // DB config
 const connString = require('./config/keys').MONGODB_URI;
-
+const mongoOpts = require('./config/keys').MONGODB_OPTS;
 // Connect to mongodb
 mongoose
-  .connect(connString, { useNewUrlParser: true })
+  .connect(connString, mongoOpts) // Options literal object instead of just: { useNewUrlParser: true }
   .then(() => console.log("Mongoose successfully connected to mongodb!"))
   .catch(err => console.log("Error at connecting to mongodb..." + err));
+
+// Passport Middleware
+app.use(passport.initialize());
+// Passport config
+require('./config/passport')(passport);
+
+// Routes
+app.use("/api/users", userRoutes);
 
 // process.env.PORT will be the port on Heroku if you decide to deploy the app over there
 const port = process.env.PORT || 5000;
