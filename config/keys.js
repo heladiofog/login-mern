@@ -5,5 +5,6 @@ const MONGODB_URI = 'mongodb://localhost:27017/devfyya0mxdb';
 // }
 
 module.exports = {
-  MONGODB_URI
+  MONGODB_URI,
+  secretOrKey: "4t3nci0n"
 };
