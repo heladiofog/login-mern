@@ -15,6 +15,10 @@ const UserSchema = new Schema({
   password: {
     type: String,
     required: true
+  },
+  phoneNumber: {
+    type: Number,
+    min: [10, 'El número debe tener al menos 10 dígitos'],
   }
 }, {
   collection: 'Users',
