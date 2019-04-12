@@ -10,7 +10,7 @@ class Dashboard extends Component {
   };
 
   render() {
-    const { user } = this.props.auth;
+    const { user } = this.props.auth; // auth has a property obj called user
     
     return (
       <div style={{ height: "75vh" }} className="container valign-wrapper">
@@ -47,9 +47,10 @@ Dashboard.propTypes = {
   auth: PropTypes.object.isRequired
 };
 
-const mapStateToProps = state => ({
-  auth: state.auth
-});
+const mapStateToProps = state => {
+  console.log(state); return ({
+  auth: state.auth  // teh info coming from auth state sent from AuthReducer
+})};
 
 export default connect(
   mapStateToProps,

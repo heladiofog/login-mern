@@ -46,7 +46,7 @@ class Login extends Component {
       email: this.state.email,
       password: this.state.password
     };
-    console.log(userData);
+    // console.log(userData);
     // since we handle the redirect within our component,
     // we don't need to pass in this.props.history as a parameter
     this.props.loginUser(userData);  
@@ -133,7 +133,7 @@ class Login extends Component {
 Login.propTypes = {
   loginUser: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
-  errors:PropTypes.object.isRequired
+  errors: PropTypes.object.isRequired
 }
 
 const mapStateToProps = state => ({
