@@ -4,6 +4,8 @@ const bodyParser = require('body-parser');
 const passport = require('passport');
 // Routes
 const userRoutes = require('./routes/api/user');
+// upload files
+const upload = require('./routes/api/upload');
 
 // Instantiating the app
 const app = express();
@@ -32,6 +34,8 @@ require('./config/passport')(passport);
 
 // Routes
 app.use("/api/users", userRoutes);
+// Upload files route
+app.use('/api/project/upload', upload);
 
 // process.env.PORT will be the port on Heroku if you decide to deploy the app over there
 const port = process.env.PORT || 5001;
