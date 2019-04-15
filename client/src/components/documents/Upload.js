@@ -113,7 +113,7 @@ class Upload extends Component {
     if (this.state.uploadProgress.uploading ||
       this.state.successfullUploaded) {
       return (
-        <div className="ProgressWraper">
+        <div className="ProgressWrapper">
           <Progress progress={uploadProgress ?
             uploadProgress.percentage : 0}
           />

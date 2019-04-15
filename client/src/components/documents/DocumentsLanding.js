@@ -17,7 +17,7 @@ class DocumentsLanding extends Component {
     const { user } = this.props.auth;
     
     return (
-      <div style={{ height: "75vh" }} className="container valign-wrapper">
+      <div style={{ height: "75vh" }} className="Container valign-wrapper">
         <div className="row">
           <div className="col s12 center-align">
             <h4>

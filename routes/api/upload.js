@@ -37,12 +37,15 @@ router.post('/', function upload(req, res) {
     form.parse(req, (err, fields, files) => {
       console.log({ message: "Parsed - Done. File temp location: " + JSON.stringify(files.file.name) });
       var oldpath = files.file.path;
+      // Neew the id/project and the shareholder for /u/p/projectId/<shareholderId_fileName>
       var newpath = './uploads/projects/' + files.file.name;
       // console.log(`OldPath: ${oldpath} - newPath: ${newpath}`);
       // Move from temp path to desired location
       fs.rename(oldpath, newpath, function (err) {
         if (err) throw err;
         // res.write('File uploaded and moved!');
+        console.log(newpath);
+        console.log(JSON.stringify(files));
         res.json({ message: "File successfully uploaded!" });
       });
     });
