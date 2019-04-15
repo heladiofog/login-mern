@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import Dropzone from '../dropzone/Dropzone';
 import Progress from '../progress/Progress';
-
+import './Upload.css';
 import CheckIcon from './baseline-check_circle-24px.svg';
 
 class Upload extends Component {
@@ -11,8 +11,8 @@ class Upload extends Component {
     this.state = {
       files: [],
       uploading: false,
-      uploadProgress: {},
-      successfullUploaded: false 
+      uploadProgress: {}, // state and progress
+      successfullUploaded: false
     };
     // binding
     this.onFilesAdded = this.onFilesAdded.bind(this);
@@ -20,46 +20,115 @@ class Upload extends Component {
     this.sendRequest = this.sendRequest.bind(this);
     this.renderActions = this.renderActions.bind(this);
   }
-
-  onFilesAdded (files) {
-    this.state(prevState => ({
-      files: prevState.file.concat(files)
+  // When files are added to the form
+  onFilesAdded(files) {
+    this.setState(prevState => ({
+      files: prevState.files.concat(files)
     }));
   }
+  // Async method to upload files
+  async uploadFiles() {
+    // Cleaning any previous uploadProgress
+    this.setState({ uploadProgress: {}, uploading: true });
+    const promises = [];
+    this.state.files.forEach(file => {
+      promises.push(this.sendRequest(file));  //  Send the upload request of teh file
+    })
 
-  uploadFiles () {
-    // TO DO
+    try {
+      // Try to upload all the files and update the state whe it is successfully finished
+      await Promise.all(promises);
+      this.setState({ successfullUploaded: true, uploading: false });
+    } catch (error) { //  If error on uploading...
+      alert("There was some error on uploading the files, please try later.");
+      this.setState({ successfullUploaded: false, uploading: false });
+    }
   }
-  
-  sendRequest () {
-    // TO DO
+  // Upload files to the server
+  sendRequest(file) {
+    return new Promise((resolve, reject) => {
+      const req = new XMLHttpRequest();
+      // Event listeners for the several events of the uploading...
+      // progress
+      req.upload.addEventListener("progress", event => {
+        if (event.lengthComputable) {
+          const copy = { ...this.state.uploadProgress };
+          copy[file.name] = {
+            state: "pending",
+            percentage: (event.loaded / event.total) * 100
+          };
+          this.setState({ uploadProgress: copy });
+        }
+      });
+      // loading
+      req.upload.addEventListener("load", event => {
+        const copy = { ...this.state.uploadProgress };
+        copy[file.name] = { state: "done", percentage: 100 };
+        this.setState({ uploadProgress: copy });
+        resolve(req.response);
+      });
+      // error
+      req.upload.addEventListener("error", event => {
+        const copy = { ...this.state.uploadProgress };
+        copy[file.name] = { state: "error", percentage: 0 };
+        this.setState({ uploadProgress: copy });
+        reject(req.response);
+      });
+
+      const formData = new FormData();
+      formData.append("file", file, file.name);
+
+      req.open("POST", "/api/project/upload");
+      req.send(formData);
+    });
   }
-
-  renderActions () {
-
+  // Some actions for the "Upload" button
+  renderActions() {
+    if (this.state.successfullUploaded) {
+      return (
+        <button
+          // When the upload finishes, it cleans the state of the button
+          onClick={() =>
+            this.setState({ files: [], successfullUploaded: false })
+          }
+        >
+          Clear
+        </button>
+      );
+    } else {  //  Otherwise, the button appears disabled if the files list is empty or there is some uploading in progress
+      return (
+        <button
+          disabled={this.state.files.length < 0 || this.state.uploading}
+          onClick={this.uploadFiles}
+        >
+          Upload
+        </button>
+      );
+    }
   }
-
-  renderProgress (file) {
+  // Showing progress upload for each file
+  renderProgress(file) {
     const uploadProgress = this.state.uploadProgress[file.name];
+
     if (this.state.uploadProgress.uploading ||
       this.state.successfullUploaded) {
-        return (
-          <div className="ProgressWraper">
-            <Progress progress={uploadProgress ?
-              uploadProgress.percentage : 0}
-            />
-            <img 
-              className="CheckIcon"
-              alt="done"
-              // src={CheckIcon}
-              src="img/baseline-check_circle-24px.svg"
-              style={{
-                opacity: uploadProgress && uploadProgress.state === "done" ? 0.5 : 0
-              }}
-            />
-          </div>
-        );
-      }
+      return (
+        <div className="ProgressWraper">
+          <Progress progress={uploadProgress ?
+            uploadProgress.percentage : 0}
+          />
+          <img
+            className="CheckIcon"
+            alt="done"
+            // src={CheckIcon}
+            src="img/baseline-check_circle-24px.svg"
+            style={{
+              opacity: uploadProgress && uploadProgress.state === "done" ? 0.5 : 0
+            }}
+          />
+        </div>
+      );
+    }
   }
   render() {
     return (
@@ -71,23 +140,22 @@ class Upload extends Component {
             <div>
               <Dropzone onFilesAdded={this.onFilesAdded}
                 disabled={this.state.uploading ||
-                this.state.successfullUploaded} 
+                  this.state.successfullUploaded}
               />
             </div>
             <div className="Files">
               {this.state.files.map(file => {
                 return (
                   <div key={file.name} className="Row">
-                    <span className="Filename">
-                      {file.name}
-                    </span>
+                    <span className="Filename">{file.name}</span>
+                    {/* Progress bar for each file... */}
                     {this.renderProgress(file)}
                   </div>
                 );
               })}
             </div>
           </div>
-          <div className="Actions" >{this.renderActions()}</div>
+          <div className="Actions">{this.renderActions()}</div>
         </div>
       </div>
     );

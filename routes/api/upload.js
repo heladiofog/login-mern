@@ -13,14 +13,14 @@ router.post('/', function upload(req, res) {
     // For each file on the form, do something
     // save it in the db
     // file.path to access the file
-
+    console.log("File Received");
     // copy the file to a specific path
   });
 
   // Second callback is called when the form is 
   // completely parsed
   form.on('end', () => {
-    res.json()
+    res.json({ message: "Donde." });
   })
 
   // Then, tigger the parsing of the form:

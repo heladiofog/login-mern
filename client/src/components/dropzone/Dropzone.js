@@ -58,6 +58,7 @@ class Dropzone extends Component {
     we need to notify the parent component about that
     */
     const files = event.dataTransfer.files;
+
     if (this.props.onFilesAdded) {
       const array = this.fileListToArray(files);
       this.props.onFilesAdded(array);
@@ -83,7 +84,8 @@ class Dropzone extends Component {
 
   render() {
     return (
-      <div className={`Dropzone ${this.state.hightlight ? 'Highlight' : ''}`}
+      <div 
+        className={`Dropzone ${this.state.hightlight ? 'Highlight' : ''}`}
         onDragOver={this.onDragOver}
         onDragLeave={this.onDragLeave}
         onDrop={this.onDrop}
@@ -104,7 +106,7 @@ class Dropzone extends Component {
           className="Icon"
           src={uploadIcon}
         />
-        <span>Upload file</span>
+        <span>Upload Files</span>
       </div>
     );
   }
